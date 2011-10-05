@@ -94,7 +94,8 @@ public:
 			curPlayer = other;
 			deleteAllExcept(moves, move);
 		}
-		return curPlayer == amax;
+		/* The person who triggers an early stop loses. */
+		return curPlayer == amin;
 	}
 
 	/* Print out the history of accepted moves. */
