@@ -5,6 +5,7 @@
 
 #include "arena.hh"
 #include "minimax.hh"
+#include "alphabeta.hh"
 
 #include <stdio.h>
 #include <string.h>
@@ -105,5 +106,16 @@ int main() {
 	TTTArena game(&p1, &p2);
 	game.run();
 	game.printHistory();
+
+	AlphabetaAgent p3("Player C");
+	TTTArena game2(&p1, &p3);
+	game2.run();
+	game2.printHistory();
+
+	AlphabetaAgent p4("Player D");
+	TTTArena game3(&p3, &p4);
+	game3.run();
+	game3.printHistory();
+
 	return 0;
 }

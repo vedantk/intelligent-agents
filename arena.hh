@@ -14,7 +14,6 @@
 #include <climits>
 
 #define INF INT_MAX
-#define MAX_DEPTH 8
 
 using namespace std;
 
@@ -98,7 +97,7 @@ public:
 		return curPlayer == amin;
 	}
 
-	/* Print out the history of accepted moves. */
+	/* Print out the history of accepted moves. Call once per run. */
 	void printHistory() {
 		cout << "--- Playing back game history. ---\n";
 		Agent* cur = amax;
@@ -107,6 +106,7 @@ public:
 			cout << "[" << cur->name << ": " << i << "] ";
 			cout << move->toString() << "\n";
 			cur = (cur == amax) ? amin : amax;
+			delete move;
 		}
 	}
 
