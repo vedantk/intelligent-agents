@@ -48,6 +48,28 @@ public:
 	}
 
 	int eval() {
+		/* Any decent compiler will unroll and combine these loops. */
+		for (int row=0; row < 3; ++row) {
+			int off = row * 3;
+			if (game[off] != 0 && (game[off] == game[off+1] == game[off+2])) {
+				return INF * game[off];
+			}
+		}
+
+		for (int col=0; col < 3; ++col) {
+			if (game[col] != 0 && (game[col] == game[col+3] == game[col+6])) {
+				return INF * game[col];
+			}
+		}
+
+		if (game[0] != 0 && (game[0] == game[4] == game[8])) {
+			return INF * game[0];
+		}
+
+		if (game[2] != 0 && (game[2] == game[4] == game[6])) {
+			return INF * game[2];
+		}
+
 		int score = 0;
 		for (int i=0; i < 9; ++i) {
 			score += game[i];
@@ -58,6 +80,11 @@ public:
 	vector<Action*> generateMoves() {
 		vector<Action*> moves;
 		int owner = curPlayerSign();
+		if (eval() == -INF * owner) {
+			/* If the other player has already won... */
+			return moves;
+		}
+
 		for (int i=0; i < 9; ++i) {
 			if (game[i] == 0) {
 				TTTAction* move = new TTTAction(i, owner);
@@ -80,4 +107,3 @@ int main() {
 	game.printHistory();
 	return 0;
 }
-

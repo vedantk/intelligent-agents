@@ -3,13 +3,6 @@
  * Vedant Kumar <vsk@berkeley.edu>
  */
 
-/*
- * TODO:
- * - Implement alpha-beta pruned minimax and negamax Agents.
- * - Implement transposition-matrix and quiescence searching Agents.
- * - Implement games (e.g tic-tac-toe) as Arenas, test multiple Agents.
- */
-
 #ifndef __ARENA__HH
 #define __ARENA__HH
 
@@ -21,7 +14,7 @@
 #include <climits>
 
 #define INF INT_MAX
-#define MAX_DEPTH 5
+#define MAX_DEPTH 8
 
 using namespace std;
 
@@ -31,7 +24,6 @@ class Action;
 
 class Action {
 public:
-	// Action() {};
 	virtual ~Action() {};
 	virtual string toString() = 0;
 };
