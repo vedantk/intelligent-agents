@@ -8,6 +8,9 @@
 
 #include "arena.hh"
 
+#include <map>
+#include <algorithm>
+
 const int minimax_depth = 10;
 
 int minimax(Arena* state, int depth, int playerSign) {

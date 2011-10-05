@@ -8,6 +8,8 @@
 
 #include "arena.hh"
 
+#include <algorithm>
+
 /*
  * When designing Arenas that make use of Alphabeta, make sure that
  * generateMoves() orders moves from best to worst (to whatever extent

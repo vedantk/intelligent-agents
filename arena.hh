@@ -6,11 +6,9 @@
 #ifndef __ARENA__HH
 #define __ARENA__HH
 
-#include <map>
 #include <vector>
 #include <string>
 #include <iostream>
-#include <algorithm>
 #include <climits>
 
 #define INF INT_MAX
