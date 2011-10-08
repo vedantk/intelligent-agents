@@ -22,7 +22,7 @@ class Action;
 class Action {
 public:
 	virtual ~Action() {};
-	virtual string toString() = 0;
+	virtual void display() = 0;
 };
 
 /* Free useless Action objects to reclaim the memory. */
@@ -67,13 +67,13 @@ public:
 	/* Revert the effects of an action. */
 	virtual void revert(Action* move) = 0;
 
-	/* Evaluate the current state independent of curPlayer. */
-	virtual int eval() = 0;
+	/* Calculate state utility from curPlayer's point of view. */
+	virtual int eval(int playerSign) = 0;
 
 	/* Generate all possible moves for the current player. */
 	virtual vector<Action*> generateMoves() = 0;
 
-	/* Sometimes it's necessary to stop the simulation early. */
+	/* Sometimes it's useful to end a simulation early. */
 	virtual bool doEarlyStop() = 0;
 
 	/* Carry out a complete simulation, return true if amax wins. */
@@ -91,8 +91,8 @@ public:
 			curPlayer = other;
 			deleteAllExcept(moves, move);
 		}
-		/* The person who triggers an early stop loses. */
-		return curPlayer == amin;
+		/* A player wins if the game is forced to end. */
+		return curPlayer == amax;
 	}
 
 	/* Print out the history of accepted moves. Call once per run. */
@@ -102,7 +102,7 @@ public:
 		for (size_t i=0; i < history.size(); ++i) {
 			Action* move = history[i];
 			cout << "[" << cur->name << ": " << i << "] ";
-			cout << move->toString() << "\n";
+			move->display();
 			cur = (cur == amax) ? amin : amax;
 			delete move;
 		}
@@ -114,4 +114,4 @@ public:
 	}
 };
 
-#endif 
+#endif

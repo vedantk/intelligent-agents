@@ -3,11 +3,10 @@
  * Vedant Kumar <vsk@berkeley.edu>
  */
 
-#include "arena.hh"
+#include "random.hh"
 #include "minimax.hh"
 #include "alphabeta.hh"
 
-#include <stdio.h>
 #include <string.h>
 
 class TTTAction : public Action {
@@ -18,24 +17,23 @@ public:
 		: posn(loc), owner(player)
 	{}
 
-	string toString() {
-		char buf[4];
-		sprintf(buf, "%d", posn);
-		return string(owner > 0 ? "X" : "O") + " to " + string(buf);
+	void display() {
+		cout << (owner > 0 ? "X" : "O") << " to " << posn << "\n";
 	}
 };
 
 class TTTArena : public Arena {
-public:
+private:
 	/* Each cell in the game array represents a cell on a tic-tac-toe
 	 * board. The cell's sign indicates ownership: -1 (min), 0 (empty),
 	 * and 1 (max). This representation makes scoring very simple. */
 	int game[9];
 
+public:
 	TTTArena(Agent* a, Agent* b)
 		: Arena(a, b)
 	{
-		memset((void*) &game, 0, sizeof(int) * 9);
+		memset(&game, 0, sizeof(int) * 9);
 	}
 
 	void apply(Action* move) {
@@ -48,44 +46,34 @@ public:
 		game[act->posn] = 0;
 	}
 
-	int eval() {
-		/* Any decent compiler will unroll and combine these loops. */
-		for (int row=0; row < 3; ++row) {
-			int off = row * 3;
-			if (game[off] != 0 && (game[off] == game[off+1] == game[off+2])) {
-				return INF * game[off];
+	int eval(int playerSign) {
+		#define CELL(row, col) game[rows[row][col]]
+		static int rows[][3] = {
+			{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, /* rows */
+			{0, 3, 6}, {1, 4, 7}, {2, 5, 8}, /* cols */
+			{0, 4, 8}, {2, 4, 6}, /* diagonals */
+		};
+
+		#define ALL_EQUAL(a, b, c) ((a == b) && (b == c))
+		for (size_t i=0; i < sizeof(rows)/sizeof(rows[0]); ++i) {
+			if (CELL(i, 0) != 0
+				&& ALL_EQUAL(CELL(i, 0), CELL(i, 1), CELL(i, 2)))
+			{
+				return CELL(i, 0);
 			}
 		}
 
-		for (int col=0; col < 3; ++col) {
-			if (game[col] != 0 && (game[col] == game[col+3] == game[col+6])) {
-				return INF * game[col];
-			}
-		}
-
-		if (game[0] != 0 && (game[0] == game[4] == game[8])) {
-			return INF * game[0];
-		}
-
-		if (game[2] != 0 && (game[2] == game[4] == game[6])) {
-			return INF * game[2];
-		}
-
-		int score = 0;
-		for (int i=0; i < 9; ++i) {
-			score += game[i];
-		}
-		return score;
+		return 0;
+		#undef CELL
+		#undef ALL_EQUAL
 	}
 
 	vector<Action*> generateMoves() {
 		vector<Action*> moves;
 		int owner = curPlayerSign();
-		if (eval() == -INF * owner) {
-			/* If the other player has already won... */
+		if (eval(owner) != 0) {
 			return moves;
 		}
-
 		for (int i=0; i < 9; ++i) {
 			if (game[i] == 0) {
 				TTTAction* move = new TTTAction(i, owner);
@@ -116,6 +104,15 @@ int main() {
 	TTTArena game3(&p3, &p4);
 	game3.run();
 	game3.printHistory();
+
+	RandomAgent p5("RandomPlayer");
+	TTTArena game4(&p1, &p5);
+	game4.run();
+	game4.printHistory();
+
+	TTTArena game5(&p3, &p1);
+	game5.run();
+	game5.printHistory();
 
 	return 0;
 }

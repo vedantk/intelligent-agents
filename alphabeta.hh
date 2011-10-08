@@ -20,12 +20,12 @@ const int alphabeta_depth = 12;
 
 int alphabeta(Arena* state, int depth, int a, int b, int playerSign) {
 	if (depth <= 0) {
-		return state->eval();
+		return state->eval(playerSign);
 	}
 
 	vector<Action*> moves = state->generateMoves();
 	if (!moves.size()) {
-		return state->eval();
+		return state->eval(playerSign);
 	}
 	for (size_t i=0; i < moves.size(); ++i) {
 		Action* move = moves[i];
@@ -55,7 +55,7 @@ public:
 	{}
 
 	Action* getAction(Arena* state, vector<Action*> moves) {
-		Action* best;
+		Action* best = NULL;
 		int alpha = -INF, beta = INF;
 		int sign = state->curPlayerSign();
 		for (size_t i=0; i < moves.size(); ++i) {

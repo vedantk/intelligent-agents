@@ -8,31 +8,30 @@
 
 #include "arena.hh"
 
-#include <map>
 #include <algorithm>
 
-const int minimax_depth = 10;
+const int minimax_depth = 7;
 
-int minimax(Arena* state, int depth, int playerSign) {
+int minimax(Arena* state, int depth, int playerSign, bool doMax) {
 	if (depth <= 0) {
-		return state->eval();
+		return state->eval(playerSign);
 	}
 
-	int alpha = -playerSign * INF;
+	int alpha = doMax ? -INF : INF;
 	vector<Action*> moves = state->generateMoves();
 	if (!moves.size()) {
-		return state->eval();
+		return state->eval(playerSign);
 	}
 	for (size_t i=0; i < moves.size(); ++i) {
 		Action* move = moves[i];
 		state->apply(move);
-		int score = minimax(state, depth - 1, -playerSign);
-		state->revert(move);
-		if (playerSign > 0) {
+		int score = minimax(state, depth - 1, -playerSign, !doMax);
+		if (doMax) {
 			alpha = max(alpha, score);
 		} else {
 			alpha = min(alpha, score);
 		}
+		state->revert(move);
 	}
 	deleteAllExcept(moves, NULL);
 	return alpha;
@@ -45,24 +44,20 @@ public:
 	{}
 
 	Action* getAction(Arena* state, vector<Action*> moves) {
-		vector<int> scores;
-		map<int, Action*> scoreMoveMap;
+		Action* best = NULL;
+		int best_score = -INF;
 		int sign = state->curPlayerSign();
 		for (size_t i=0; i < moves.size(); ++i) {
 			Action* move = moves[i];
 			state->apply(move);
-			int score = minimax(state, minimax_depth, -sign);
+			int score = minimax(state, minimax_depth, -sign, false);
 			state->revert(move);
-			scores.push_back(score);
-			scoreMoveMap[score] = move;
+			if (score > best_score) {
+				best = move;
+				best_score = score;
+			}
 		}
-		int target;
-		if (sign > 0) {
-			target = *max_element(scores.begin(), scores.end());
-		} else {
-			target = *min_element(scores.begin(), scores.end());
-		}
-		return scoreMoveMap[target];
+		return best;
 	}
 };
 
