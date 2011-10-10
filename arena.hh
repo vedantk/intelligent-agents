@@ -11,7 +11,7 @@
 #include <iostream>
 #include <climits>
 
-#define INF INT_MAX
+#define INF (INT_MAX - 1)
 
 using namespace std;
 
@@ -82,7 +82,7 @@ public:
 			vector<Action*> moves = generateMoves();
 			Agent* other = (curPlayer == amax) ? amin : amax;
 			if (!moves.size()) {
-				cout << other->name << " wins.\n";
+				cout << other->name << " wins (opponent has no moves).\n";
 				return other == amax;
 			}
 			Action* move = curPlayer->getAction(this, moves);
@@ -91,8 +91,9 @@ public:
 			curPlayer = other;
 			deleteAllExcept(moves, move);
 		}
-		/* A player wins if the game is forced to end. */
-		return curPlayer == amax;
+		/* The player who forces an early stop wins. */
+		cout << curPlayer->name << " loses.\n";
+		return -curPlayerSign() > 0;
 	}
 
 	/* Print out the history of accepted moves. Call once per run. */
@@ -106,6 +107,7 @@ public:
 			cur = (cur == amax) ? amin : amax;
 			delete move;
 		}
+		cout << endl;
 	}
 
 	/* Determine the numeric sign of the current player. */

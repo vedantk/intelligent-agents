@@ -16,6 +16,11 @@
  * possible). The better the ordering, the faster the search.
  */
 
+/*
+ * Alphabeta currently seems to be picking the rightmost branch of the
+ * possible move-set every single time. Why?
+ */
+
 const int alphabeta_depth = 12;
 
 int alphabeta(Arena* state, int depth, int a, int b, int playerSign) {
