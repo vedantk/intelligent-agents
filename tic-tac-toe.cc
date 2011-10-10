@@ -6,6 +6,7 @@
 #include "random.hh"
 #include "minimax.hh"
 #include "alphabeta.hh"
+#include "human.hh"
 
 #include <string.h>
 
@@ -129,6 +130,15 @@ int main() {
 	TTTArena game5(&p3, &p1);
 	game5.run();
 	game5.printHistory();
+
+	HumanAgent p6("Human Challenger");
+	TTTArena game6(&p5, &p6);
+	game6.run();
+	game6.printHistory();
+
+	TTTArena game7(&p6, &p4);
+	game7.run();
+	game7.printHistory();
 
 	return 0;
 }

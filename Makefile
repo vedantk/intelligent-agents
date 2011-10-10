@@ -3,7 +3,7 @@ OPTS = -O3 -g
 CXXFLAGS = -Wall -Wextra $(OPTS)
 
 OBJS = arena.hh.gch maxaction.hh.gch random.hh.gch \
-       minimax.hh.gch alphabeta.hh.gch tic-tac-toe
+       minimax.hh.gch alphabeta.hh.gch human.hh.gch tic-tac-toe
 
 all: $(OBJS)
 
@@ -11,10 +11,11 @@ all: $(OBJS)
 	$(CXX) -c $^ $(CXXFLAGS)
 
 arena.hh.gch: arena.hh
-random.hh.gch: random.hh
 maxaction.hh.gch: maxaction.hh
+random.hh.gch: random.hh
 minimax.hh.gch: minimax.hh
 alphabeta.hh.gch: alphabeta.hh
+human.hh.gch: human.hh
 tic-tac-toe: tic-tac-toe.cc
 
 clean:
