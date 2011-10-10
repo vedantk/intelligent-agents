@@ -17,3 +17,5 @@ tic-tac-toe: tic-tac-toe.cc
 
 clean:
 	rm -f $(OBJS)
+
+redo: clean all

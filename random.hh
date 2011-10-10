@@ -19,7 +19,7 @@ public:
 	}
 
 	Action* getAction(Arena* state, vector<Action*> moves) {
-		return moves[rand() % moves.size()];
+		return moves[(rand() + state->curPlayerSign()) % moves.size()];
 	}
 };
 

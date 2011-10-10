@@ -72,6 +72,9 @@ public:
 	vector<Action*> generateMoves() {
 		vector<Action*> moves;
 		int owner = curPlayerSign();
+		if (eval(owner) != 0) {
+			return moves;
+		}
 		for (int i=0; i < 9; ++i) {
 			if (game[i] == 0) {
 				TTTAction* move = new TTTAction(i, owner);
@@ -82,7 +85,22 @@ public:
 	}
 
 	bool doEarlyStop() {
-		return eval(curPlayerSign()) != 0;
+		return false;
+	}
+
+	void show() {
+		for (int i=0; i < 9; ++i) {
+			switch (game[i]) {
+				case 0: cout << " "; break;
+				case 1: cout << "X"; break;
+				case -1: cout << "O"; break;
+			}
+			cout << "|";
+			if ((i+1) % 3 == 0) {
+				cout << endl;
+			}
+		}
+		cout << endl;
 	}
 };
 

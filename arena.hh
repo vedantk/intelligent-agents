@@ -76,6 +76,14 @@ public:
 	/* Sometimes it's useful to end a simulation early. */
 	virtual bool doEarlyStop() = 0;
 
+	/* Display the current state. */
+	virtual void show() = 0;
+
+	/* Update the game state so that the next player can move. */
+	void switchPlayer() {
+		curPlayer = (curPlayer == amax) ? amin : amax;
+	}
+
 	/* Carry out a complete simulation, return true if amax wins. */
 	bool run() {
 		while (!doEarlyStop()) {
@@ -88,7 +96,7 @@ public:
 			Action* move = curPlayer->getAction(this, moves);
 			apply(move);
 			history.push_back(move);
-			curPlayer = other;
+			switchPlayer();
 			deleteAllExcept(moves, move);
 		}
 		/* The player who forces an early stop wins. */

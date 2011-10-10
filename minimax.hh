@@ -21,22 +21,23 @@ private:
 		if (depth <= 0) {
 			return game->eval(playerSign);
 		}
-
-		int alpha = doMax ? -INF : INF;
 		vector<Action*> moves = game->generateMoves();
-		if (!moves.size()) {
+		if (!moves.size() || game->doEarlyStop()) {
 			return game->eval(playerSign);
 		}
+
+		game->switchPlayer();
+		int alpha = doMax ? -INF : INF;
 		for (size_t i=0; i < moves.size(); ++i) {
 			Action* move = moves[i];
 			game->apply(move);
 			int score = minimax(depth - 1, !doMax);
+			game->revert(move);
 			if (doMax) {
 				alpha = max(alpha, score);
 			} else {
 				alpha = min(alpha, score);
 			}
-			game->revert(move);
 		}
 		deleteAllExcept(moves, NULL);
 		return alpha;
@@ -52,6 +53,7 @@ public:
 		Action* best = NULL;
 		int best_score = -INF;
 		playerSign = state->curPlayerSign();
+		game->switchPlayer(); 
 		for (size_t i=0; i < moves.size(); ++i) {
 			Action* move = moves[i];
 			state->apply(move);
