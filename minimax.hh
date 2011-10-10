@@ -39,6 +39,7 @@ private:
 				alpha = min(alpha, score);
 			}
 		}
+		game->switchPlayer();
 		deleteAllExcept(moves, NULL);
 		return alpha;
 	}
@@ -64,6 +65,7 @@ public:
 				best_score = score;
 			}
 		}
+		game->switchPlayer();
 		return best;
 	}
 };
