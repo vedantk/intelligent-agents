@@ -6,9 +6,7 @@
 #ifndef __ALPHABETA__HH
 #define __ALPHABETA__HH
 
-#include "arena.hh"
-
-#include <algorithm>
+#include "maxaction.hh"
 
 /*
  * When designing Arenas that make use of Alphabeta, make sure that
@@ -16,67 +14,47 @@
  * possible). The better the ordering, the faster the search.
  */
 
-/*
- * Alphabeta currently seems to be picking the rightmost branch of the
- * possible move-set every single time. Why?
- */
-
-const int alphabeta_depth = 12;
-
-int alphabeta(Arena* state, int depth, int a, int b, int playerSign) {
-	if (depth <= 0) {
-		return state->eval(playerSign);
-	}
-
-	vector<Action*> moves = state->generateMoves();
-	if (!moves.size()) {
-		return state->eval(playerSign);
-	}
-	for (size_t i=0; i < moves.size(); ++i) {
-		Action* move = moves[i];
-		state->apply(move);
-		int score = alphabeta(state, depth - 1, a, b, -playerSign);
-		state->revert(move);
-		if (playerSign > 0) {
-			a = max(a, score);
-			if (b <= a) {
-				break;
-			}
-		} else {
-			b = min(b, score);
-			if (b <= a) {
-				break;
-			}
+class AlphabetaAgent : public MaxActionAgent {
+private:
+	int alphabeta(int depth, int a, int b, bool doMax) {
+		if (depth <= 0) {
+			return game->eval(playerSign);
 		}
-	}
-	deleteAllExcept(moves, NULL);
-	return (playerSign > 0) ? a : b;
-}
+		vector<Action*> moves = game->generateMoves();
+		if (!moves.size() || game->doEarlyStop()) {
+			return game->eval(playerSign);
+		}
 
-class AlphabetaAgent : public Agent {
-public:
-	AlphabetaAgent(string algo)
-		: Agent(algo)
-	{}
-
-	Action* getAction(Arena* state, vector<Action*> moves) {
-		Action* best = NULL;
-		int alpha = -INF, beta = INF;
-		int sign = state->curPlayerSign();
+		game->switchPlayer();
 		for (size_t i=0; i < moves.size(); ++i) {
 			Action* move = moves[i];
-			state->apply(move);
-			int score = alphabeta(state, alphabeta_depth, alpha, beta, -sign);
-			state->revert(move);
-			if (sign > 0) {
-				alpha = max(alpha, score);
-				best = (score == alpha) ? move : best;
+			game->apply(move);
+			int score = alphabeta(depth - 1, a, b, !doMax);
+			game->revert(move);
+			if (doMax) {
+				a = max(a, score);
+				if (b <= a) {
+					break;
+				}
 			} else {
-				beta = min(beta, score);
-				best = (score == beta) ? move : best;
+				b = min(b, score);
+				if (b <= a) {
+					break;
+				}
 			}
 		}
-		return best;
+		game->switchPlayer();
+		deleteAllExcept(moves, NULL);
+		return doMax ? a : b;
+	}
+
+public:
+	AlphabetaAgent(string algo, int maxDepth = 12)
+		: MaxActionAgent(algo, maxDepth)
+	{}
+
+	int initializeSearch() {
+		return alphabeta(depth, -INF, INF, false);
 	}
 };
 

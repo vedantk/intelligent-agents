@@ -6,17 +6,10 @@
 #ifndef __MINIMAX__HH
 #define __MINIMAX__HH
 
-#include "arena.hh"
+#include "maxaction.hh"
 
-#include <algorithm>
-
-const int minimax_depth = 10;
-
-class MinimaxAgent : public Agent {
+class MinimaxAgent : public MaxActionAgent {
 private:
-	Arena* game;
-	int playerSign;
-
 	int minimax(int depth, bool doMax) {
 		if (depth <= 0) {
 			return game->eval(playerSign);
@@ -45,28 +38,12 @@ private:
 	}
 
 public:
-	MinimaxAgent(string algo)
-		: Agent(algo)
+	MinimaxAgent(string algo, int maxDepth = 10)
+		: MaxActionAgent(algo, maxDepth)
 	{}
 
-	Action* getAction(Arena* state, vector<Action*> moves) {
-		game = state;
-		Action* best = NULL;
-		int best_score = -INF;
-		playerSign = state->curPlayerSign();
-		game->switchPlayer(); 
-		for (size_t i=0; i < moves.size(); ++i) {
-			Action* move = moves[i];
-			state->apply(move);
-			int score = minimax(minimax_depth, false);
-			state->revert(move);
-			if (score > best_score) {
-				best = move;
-				best_score = score;
-			}
-		}
-		game->switchPlayer();
-		return best;
+	int initializeSearch() {
+		return minimax(depth, false);
 	}
 };
 

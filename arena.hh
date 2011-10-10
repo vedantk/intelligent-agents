@@ -11,7 +11,7 @@
 #include <iostream>
 #include <climits>
 
-#define INF (INT_MAX - 1)
+#define INF INT_MAX
 
 using namespace std;
 
