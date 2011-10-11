@@ -67,7 +67,7 @@ public:
 	/* Revert the effects of an action. */
 	virtual void revert(Action* move) = 0;
 
-	/* Calculate state utility from curPlayer's point of view. */
+	/* Calculate the state utility for the given player. */
 	virtual int eval(int playerSign) = 0;
 
 	/* Generate all possible moves for the current player. */
